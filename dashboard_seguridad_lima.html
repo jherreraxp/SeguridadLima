@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Seguridad Ciudadana — Lima Metropolitana 2022–2025</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.11.0/dist/tabler-icons.min.css">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg2: #f3f4f6;
+    --bg3: #e5e7eb;
+    --text1: #111827;
+    --text2: #6b7280;
+    --border1: rgba(0,0,0,0.15);
+    --border2: rgba(0,0,0,0.10);
+    --info-bg: #eff6ff;
+    --info-text: #1d4ed8;
+    --info-border: rgba(29,78,216,0.3);
+    --success-bg: #f0fdf4;
+    --success-text: #15803d;
+    --success-border: rgba(21,128,61,0.3);
+    --danger-bg: #fef2f2;
+    --danger-text: #dc2626;
+    --danger-border: rgba(220,38,38,0.3);
+    --warn-bg: #fffbeb;
+    --warn-text: #b45309;
+    --r-md: 8px;
+    --r-lg: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111827;
+      --bg2: #1f2937;
+      --bg3: #374151;
+      --text1: #f9fafb;
+      --text2: #9ca3af;
+      --border1: rgba(255,255,255,0.15);
+      --border2: rgba(255,255,255,0.08);
+      --info-bg: #1e3a5f;
+      --info-text: #93c5fd;
+      --info-border: rgba(147,197,253,0.3);
+      --success-bg: #052e16;
+      --success-text: #4ade80;
+      --success-border: rgba(74,222,128,0.3);
+      --danger-bg: #450a0a;
+      --danger-text: #fca5a5;
+      --danger-border: rgba(252,165,165,0.3);
+      --warn-bg: #451a03;
+      --warn-text: #fcd34d;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text1); font-size: 14px; }
+  .tb { padding: 7px 14px; border-radius: var(--r-md); border: 0.5px solid var(--border1); background: transparent; cursor: pointer; font-size: 12px; color: var(--text2); font-family: inherit; transition: all .15s; }
+  .tb.act, .tb:hover { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); }
+  .tb.act { font-weight: 500; }
+  .cc { background: var(--bg2); border-radius: var(--r-lg); border: 0.5px solid var(--border2); padding: 14px; }
+  .ct { font-size: 12px; font-weight: 500; color: var(--text1); margin-bottom: 2px; }
+  .cs { font-size: 11px; color: var(--text2); margin-bottom: 10px; }
+  .g2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 12px; }
+  .g3 { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+  .g4 { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+  .g6 { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 10px; }
+  .kpi { background: var(--bg2); border-radius: var(--r-lg); border: 0.5px solid var(--border2); padding: 14px 16px; position: relative; }
+  .kv { font-size: 26px; font-weight: 500; color: var(--text1); }
+  .ku { font-size: 12px; color: var(--text2); }
+  .kl { font-size: 10px; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
+  .kd { width: 8px; height: 8px; border-radius: 50%; position: absolute; top: 14px; right: 14px; }
+  .kch { font-size: 11px; margin-top: 4px; }
+  .mmb { font-size: 10px; padding: 3px 8px; border-radius: 4px; border: 0.5px solid var(--border1); background: transparent; cursor: pointer; font-family: inherit; color: var(--text2); }
+  .mmb.act { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); }
+  .rlb { display: block; width: 100%; text-align: left; padding: 10px 12px; border-radius: var(--r-md); border: 0.5px solid var(--border2); background: transparent; cursor: pointer; font-size: 12px; color: var(--text2); font-family: inherit; margin-bottom: 6px; transition: all .15s; }
+  .rlb.act { background: var(--info-bg); color: var(--info-text); border-color: var(--info-border); font-weight: 500; }
+  .src { border-radius: var(--r-lg); padding: 14px; border: 0.5px solid var(--border2); margin-bottom: 10px; }
+  select { font-family: inherit; font-size: 12px; padding: 6px 10px; border-radius: var(--r-md); border: 0.5px solid var(--border1); background: var(--bg2); color: var(--text1); cursor: pointer; }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .g2, .g3, .g4, .g6 { grid-template-columns: 1fr; }
+    #map-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div style="display:flex;justify-content:space-between;align-items:flex-start;padding:14px 20px 10px;border-bottom:0.5px solid var(--border2);flex-wrap:wrap;gap:10px;background:var(--bg)">
+  <div>
+    <div style="font-size:10px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px">PNP · División de análisis criminal — Lima</div>
+    <div style="font-size:18px;font-weight:500;color:var(--text1)">Seguridad ciudadana — Lima Metropolitana</div>
+    <div style="font-size:11px;color:var(--text2);margin-top:2px">1,800 casos · 17 distritos · 2022–2025</div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <select id="sdist"><option value="TODOS">Todos los distritos</option></select>
+    <select id="sdelito">
+      <option value="TODOS">Todos los delitos</option>
+      <option value="Robo al paso">Robo al paso</option>
+      <option value="Robo a mano armada">Robo a mano armada</option>
+      <option value="Hurto simple">Hurto simple</option>
+      <option value="Violencia familiar">Violencia familiar</option>
+      <option value="Lesiones físicas">Lesiones físicas</option>
+      <option value="Estafa / Fraude">Estafa / Fraude</option>
+      <option value="Robo de vehículo">Robo de vehículo</option>
+      <option value="Microcom. drogas">Microcom. drogas</option>
+    </select>
+  </div>
+</div>
+
+<!-- TAB NAV -->
+<div style="display:flex;gap:6px;padding:10px 20px;border-bottom:0.5px solid var(--border2);background:var(--bg)">
+  <button class="tb act" data-tab="0"><i class="ti ti-building-community"></i> Situación</button>
+  <button class="tb" data-tab="1"><i class="ti ti-chart-arrows"></i> Análisis predictivo</button>
+  <button class="tb" data-tab="2"><i class="ti ti-file-text"></i> Narrativa S→C→R</button>
+</div>
+
+<!-- ===== PANEL 0: SITUACIÓN ===== -->
+<div class="tab-panel" data-panel="0" style="padding:14px 20px">
+
+  <!-- KPIs -->
+  <div class="g4" style="margin-bottom:14px">
+    <div class="kpi" style="border-left:3px solid #E24B4A">
+      <div class="kd" style="background:#E24B4A"></div>
+      <div class="kl">Total incidentes</div>
+      <div><span class="kv" id="v-casos">1,800</span> <span class="ku">casos</span></div>
+      <div class="kch" style="color:#E24B4A"><i class="ti ti-arrow-up"></i> +1.9% vs 2023</div>
+    </div>
+    <div class="kpi" style="border-left:3px solid #E24B4A">
+      <div class="kd" id="dot-reinc" style="background:#E24B4A"></div>
+      <div class="kl">Tasa de reincidencia</div>
+      <div><span class="kv" id="v-reinc">28.2</span><span class="ku">%</span></div>
+      <div class="kch" style="color:#E24B4A"><i class="ti ti-target"></i> Meta: 18%</div>
+    </div>
+    <div class="kpi" style="border-left:3px solid #BA7517">
+      <div class="kd" style="background:#BA7517"></div>
+      <div class="kl">Cobertura denuncia</div>
+      <div><span class="kv" id="v-den">69.5</span><span class="ku">%</span></div>
+      <div class="kch" style="color:#BA7517"><i class="ti ti-arrow-down"></i> Meta: 85%</div>
+    </div>
+    <div class="kpi" style="border-left:3px solid #BA7517">
+      <div class="kd" style="background:#BA7517"></div>
+      <div class="kl">Días prom. resolución</div>
+      <div><span class="kv" id="v-dias">35.6</span><span class="ku">días</span></div>
+      <div class="kch" style="color:#BA7517"><i class="ti ti-target"></i> Meta: ≤20 días</div>
+    </div>
+  </div>
+
+  <!-- Map + Charts -->
+  <div id="map-grid" style="display:grid;grid-template-columns:270px 1fr;gap:12px;margin-bottom:12px">
+    <div class="cc" style="position:relative">
+      <div class="ct">Mapa de calor — Lima</div>
+      <div class="cs">Tamaño = casos · Color = riesgo · Clic para filtrar</div>
+      <div style="display:flex;gap:4px;margin-bottom:8px">
+        <button class="mmb act" data-metric="casos">Casos</button>
+        <button class="mmb" data-metric="reinc">Reincidencia</button>
+        <button class="mmb" data-metric="dias">Resolución</button>
+      </div>
+      <svg id="lima-map" width="100%" viewBox="0 0 240 390" style="display:block">
+        <path d="M58,18 Q85,10 125,13 Q172,17 205,42 Q222,65 218,115 Q215,165 208,215 Q196,270 183,318 Q167,358 150,382 Q132,393 112,387 Q88,373 76,345 Q60,312 54,268 Q46,222 50,172 Q52,128 56,82 Q57,48 58,18Z" fill="none" stroke="var(--border1)" stroke-width="1.2" opacity="0.6"/>
+        <path d="M50,172 Q32,160 22,146 Q18,134 32,126 Q46,121 56,150" fill="none" stroke="var(--border1)" stroke-width="1" opacity="0.4"/>
+        <g id="map-bubbles"></g>
+      </svg>
+      <div id="mtt" style="display:none;position:absolute;background:var(--bg);border:0.5px solid var(--border1);border-radius:var(--r-md);padding:10px 12px;font-size:11px;color:var(--text1);pointer-events:none;z-index:10;max-width:155px;box-shadow:0 2px 8px rgba(0,0,0,.15)"></div>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#E24B4A;display:inline-block"></span>Alto (≥30%)</span>
+        <span style="font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#BA7517;display:inline-block"></span>Medio</span>
+        <span style="font-size:10px;color:var(--text2);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:50%;background:#0F6E56;display:inline-block"></span>Bajo</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="cc">
+        <div class="ct">Los incidentes escalan sostenidamente desde el 2.° semestre de 2023</div>
+        <div class="cs">Casos mensuales por año · línea punteada = 2025 (parcial)</div>
+        <div style="position:relative;height:148px"><canvas id="c-trend" role="img" aria-label="Tendencia mensual de incidentes 2022-2025"></canvas></div>
+      </div>
+      <div class="cc">
+        <div class="ct">El robo al paso concentra 3 de cada 10 incidentes registrados</div>
+        <div class="cs" id="delito-subtitle">Distribución por tipo de delito</div>
+        <div style="position:relative;height:148px"><canvas id="c-delito" role="img" aria-label="Casos por tipo de delito"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom row -->
+  <div class="g3">
+    <div class="cc">
+      <div class="ct">La noche concentra 4 de cada 10 delitos</div>
+      <div class="cs">Distribución por turno</div>
+      <div style="position:relative;height:130px"><canvas id="c-turno" role="img" aria-label="Casos por turno del día"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ct">El arma blanca supera al arma de fuego en 2.2×</div>
+      <div class="cs">Tipo de arma utilizada</div>
+      <div style="position:relative;height:130px"><canvas id="c-arma" role="img" aria-label="Distribución por tipo de arma"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ct">La vía pública es escenario del 37% de los delitos</div>
+      <div class="cs">Lugar del hecho</div>
+      <div style="position:relative;height:130px"><canvas id="c-lugar" role="img" aria-label="Distribución por lugar del hecho"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PANEL 1: PREDICTIVO ===== -->
+<div class="tab-panel" data-panel="1" style="padding:14px 20px">
+  <div style="font-size:12px;color:var(--text2);margin-bottom:12px">
+    Modelo: <strong>Random Forest Classifier</strong> · Variable objetivo: <strong>Zona de riesgo</strong> (Alto / Medio / Bajo) · Split 70/30 · 6 predictores · 1,260 registros de entrenamiento
+  </div>
+  <div class="g6" style="margin-bottom:14px">
+    <div class="cc" style="text-align:center"><div style="font-size:22px;font-weight:500;color:#0F6E56">82.4%</div><div style="font-size:11px;color:var(--text2)">Accuracy</div></div>
+    <div class="cc" style="text-align:center"><div style="font-size:22px;font-weight:500;color:#0F6E56">0.79</div><div style="font-size:11px;color:var(--text2)">F1-score</div></div>
+    <div class="cc" style="text-align:center"><div style="font-size:22px;font-weight:500;color:#0F6E56">0.81</div><div style="font-size:11px;color:var(--text2)">Precision</div></div>
+    <div class="cc" style="text-align:center"><div style="font-size:22px;font-weight:500;color:#BA7517">0.79</div><div style="font-size:11px;color:var(--text2)">Recall</div></div>
+    <div class="cc" style="text-align:center"><div style="font-size:22px;font-weight:500;color:#185FA5">6</div><div style="font-size:11px;color:var(--text2)">Predictores</div></div>
+    <div class="cc" style="text-align:center"><div style="font-size:22px;font-weight:500;color:#185FA5">1,260</div><div style="font-size:11px;color:var(--text2)">Registros entren.</div></div>
+  </div>
+
+  <div class="g2" style="margin-bottom:14px">
+    <div class="cc">
+      <div class="ct">Variables más influyentes en la predicción</div>
+      <div class="cs">El distrito y el tipo de delito explican el 56% de la varianza</div>
+      <div style="position:relative;height:200px"><canvas id="c-feat" role="img" aria-label="Importancia de variables del modelo Random Forest"></canvas></div>
+    </div>
+    <div class="cc">
+      <div class="ct">Top 8 distritos por tasa de reincidencia</div>
+      <div class="cs">La Victoria lidera con 38.3% — zona de intervención prioritaria</div>
+      <div style="position:relative;height:200px"><canvas id="c-rdist" role="img" aria-label="Tasa de reincidencia por distrito"></canvas></div>
+    </div>
+  </div>
+
+  <div class="cc" style="margin-bottom:14px">
+    <div class="ct">Proyección de escenarios 2026–2028: sin vs. con intervención</div>
+    <div class="cs">La inacción implica +52% de casos adicionales · La intervención reduce la carga en −31%</div>
+    <div style="display:flex;gap:16px;margin-bottom:8px;font-size:11px;color:var(--text2);flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:18px;height:2px;background:#888780;display:inline-block"></span>Histórico</span>
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:18px;height:2px;background:#E24B4A;display:inline-block"></span>Sin intervención</span>
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:18px;height:2px;background:#0F6E56;display:inline-block"></span>Con intervención</span>
+    </div>
+    <div style="position:relative;height:200px"><canvas id="c-scen" role="img" aria-label="Proyección de escenarios 2022-2028"></canvas></div>
+  </div>
+
+  <div class="g2">
+    <div style="background:var(--danger-bg);border-radius:var(--r-lg);border:0.5px solid var(--danger-border);padding:14px">
+      <div style="font-size:13px;font-weight:500;color:var(--danger-text);margin-bottom:12px"><i class="ti ti-alert-triangle"></i> Sin intervención — escenario malo</div>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Casos 2026</td><td style="text-align:right;font-weight:500;color:var(--danger-text)">688 (+28%)</td></tr>
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Casos 2027</td><td style="text-align:right;font-weight:500;color:var(--danger-text)">750 (+40%)</td></tr>
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Reincidencia 2026</td><td style="text-align:right;font-weight:500;color:var(--danger-text)">33% (+4.8 pp)</td></tr>
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Días resolución</td><td style="text-align:right;font-weight:500;color:var(--danger-text)">41 días</td></tr>
+        <tr><td style="padding:8px 0;color:var(--text2)">Costo operativo adicional</td><td style="text-align:right;font-weight:500;color:var(--danger-text)">+S/. 2.4M/año</td></tr>
+      </table>
+    </div>
+    <div style="background:var(--success-bg);border-radius:var(--r-lg);border:0.5px solid var(--success-border);padding:14px">
+      <div style="font-size:13px;font-weight:500;color:var(--success-text);margin-bottom:12px"><i class="ti ti-check"></i> Con intervención — escenario prometedor</div>
+      <table style="width:100%;font-size:12px;border-collapse:collapse">
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Casos 2026</td><td style="text-align:right;font-weight:500;color:var(--success-text)">480 (−11%)</td></tr>
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Casos 2027</td><td style="text-align:right;font-weight:500;color:var(--success-text)">420 (−22%)</td></tr>
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Reincidencia 2026</td><td style="text-align:right;font-weight:500;color:var(--success-text)">18% (−10.2 pp)</td></tr>
+        <tr style="border-bottom:0.5px solid var(--border2)"><td style="padding:8px 0;color:var(--text2)">Días resolución</td><td style="text-align:right;font-weight:500;color:var(--success-text)">20 días</td></tr>
+        <tr><td style="padding:8px 0;color:var(--text2)">Ahorro operativo</td><td style="text-align:right;font-weight:500;color:var(--success-text)">3,200 h/policía-año</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PANEL 2: NARRATIVA ===== -->
+<div class="tab-panel" data-panel="2" style="padding:14px 20px">
+  <div class="cc" style="margin-bottom:14px">
+    <div style="font-size:10px;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Datos extraídos del dashboard · Lima metropolitana 2022–2024</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:12px">
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:var(--text1)">1,800</div><div style="font-size:10px;color:var(--text2)">casos registrados</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:#E24B4A">28.2%</div><div style="font-size:10px;color:var(--text2)">tasa reincidencia</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:#BA7517">35.6 d</div><div style="font-size:10px;color:var(--text2)">prom. resolución</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:#BA7517">69.5%</div><div style="font-size:10px;color:var(--text2)">cobertura denuncia</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:#E24B4A">SJL: 294</div><div style="font-size:10px;color:var(--text2)">distrito crítico #1</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:#E24B4A">38.3%</div><div style="font-size:10px;color:var(--text2)">reinc. La Victoria</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:#E24B4A">+28%</div><div style="font-size:10px;color:var(--text2)">proyección malo 2026</div></div>
+      <div style="text-align:center"><div style="font-size:18px;font-weight:500;color:#0F6E56">−31%</div><div style="font-size:10px;color:var(--text2)">reducción c/ intervención</div></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div>
+      <div class="cc" style="margin-bottom:12px">
+        <div class="ct" style="margin-bottom:12px">Generador de narrativa — framework REACT</div>
+        <div style="font-size:10px;color:var(--text2);font-weight:500;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em">Rol — selecciona la audiencia</div>
+        <button class="rlb act" data-role="Director PNP"><i class="ti ti-shield"></i> Director PNP</button>
+        <button class="rlb" data-role="Gerente MML"><i class="ti ti-building"></i> Gerente MML</button>
+        <button class="rlb" data-role="Ministro del Interior"><i class="ti ti-crown"></i> Ministro del Interior</button>
+        <div style="font-size:10px;color:var(--text2);margin-bottom:8px;padding:8px;background:var(--warn-bg);border-radius:var(--r-md);border-left:3px solid #BA7517">
+          <strong>Requiere API key de Anthropic.</strong> Abre este archivo en un servidor local o agrega tu API key en el código (variable <code>ANTHROPIC_API_KEY</code>).
+        </div>
+        <button id="gen-btn" style="width:100%;padding:10px;border-radius:var(--r-md);border:0.5px solid var(--info-border);background:var(--info-bg);color:var(--info-text);font-size:13px;font-weight:500;cursor:pointer;font-family:inherit">
+          <i class="ti ti-sparkles"></i> Generar narrativa S→C→R
+        </button>
+      </div>
+      <div class="cc">
+        <div class="ct" style="margin-bottom:10px">Prompt REACT activo</div>
+        <div id="react-prompt"></div>
+      </div>
+    </div>
+    <div id="narr-out">
+      <div class="cc" style="text-align:center;padding:40px">
+        <i class="ti ti-file-text" style="font-size:32px;color:var(--text2)"></i>
+        <div style="margin-top:12px;color:var(--text2)">Selecciona un rol y pulsa<br><strong>"Generar narrativa S→C→R"</strong></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:8px">La narrativa extrae datos del dashboard<br>y se adapta al rol seleccionado</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SCRIPTS ========== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── Configuración API (reemplazar con tu key si se despliega fuera de Claude.ai) ──
+const ANTHROPIC_API_KEY = "";   // ← pegar aquí si se usa fuera de claude.ai
+
+// ── DATOS ──
+const DIST=[
+  {n:"Ate Vitarte",   c:137,r:37.2,d:79.6,di:38.9,z:"Alto",  x:216,y:235},
+  {n:"Callao",        c:93, r:30.1,d:58.1,di:30.0,z:"Medio", x:32, y:174},
+  {n:"Carabayllo",    c:68, r:23.5,d:64.7,di:33.4,z:"Medio", x:140,y:28},
+  {n:"Comas",         c:128,r:16.4,d:63.3,di:27.7,z:"Medio", x:125,y:74},
+  {n:"El Agustino",   c:111,r:32.4,d:79.3,di:41.7,z:"Alto",  x:190,y:218},
+  {n:"Independencia", c:53, r:22.6,d:62.3,di:25.8,z:"Medio", x:142,y:122},
+  {n:"La Molina",     c:35, r:8.6, d:57.1,di:14.7,z:"Bajo",  x:225,y:280},
+  {n:"La Victoria",   c:154,r:38.3,d:76.6,di:43.4,z:"Alto",  x:166,y:218},
+  {n:"Lima Cercado",  c:170,r:36.5,d:76.5,di:44.7,z:"Alto",  x:146,y:192},
+  {n:"Los Olivos",    c:101,r:23.8,d:59.4,di:34.2,z:"Medio", x:114,y:106},
+  {n:"Miraflores",    c:57, r:8.8, d:43.9,di:20.2,z:"Bajo",  x:120,y:268},
+  {n:"San Borja",     c:55, r:9.1, d:49.1,di:13.1,z:"Bajo",  x:158,y:254},
+  {n:"San Isidro",    c:33, r:3.0, d:57.6,di:12.8,z:"Bajo",  x:132,y:242},
+  {n:"San Juan de Lurigancho",c:294,r:35.7,d:79.9,di:44.2,z:"Alto", x:198,y:124},
+  {n:"San Martín de Porres",  c:137,r:24.8,d:59.1,di:31.1,z:"Medio",x:104,y:150},
+  {n:"Surco",         c:53, r:5.7, d:49.1,di:17.8,z:"Bajo",  x:158,y:298},
+  {n:"Villa El Salvador",     c:121,r:34.7,d:83.5,di:44.3,z:"Alto", x:126,y:370},
+];
+const MES=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+const TR=[
+  [38,34,46,38,49,56,47,49,50,61,60,53],
+  [44,41,35,37,39,41,41,40,57,54,47,51],
+  [46,36,45,51,37,55,48,41,36,53,34,55],
+  [62,47,46,null,null,null,null,null,null,null,null,null]
+];
+const DEL=[
+  {n:"Robo al paso",v:518},{n:"Robo a mano armada",v:343},{n:"Hurto simple",v:292},
+  {n:"Violencia familiar",v:217},{n:"Lesiones físicas",v:169},{n:"Estafa / Fraude",v:123},
+  {n:"Robo de vehículo",v:85},{n:"Microcom. drogas",v:53}
+];
+const TUR=[{n:"Noche",v:687},{n:"Mañana",v:435},{n:"Tarde",v:407},{n:"Madrugada",v:271}];
+const ARM=[{n:"Sin arma",v:778},{n:"Arma blanca",v:582},{n:"Arma de fuego",v:268},{n:"Contundente",v:172}];
+const LUG=[{n:"Vía pública",v:669},{n:"Vivienda",v:410},{n:"Est. comercial",v:331},{n:"Transp. público",v:217},{n:"Vehículo part.",v:104},{n:"Parque",v:69}];
+const FI=[{f:"Distrito",v:31.2},{f:"Tipo delito",v:24.8},{f:"Turno",v:18.5},{f:"Mes",v:13.1},{f:"Arma usada",v:8.4},{f:"Lugar hecho",v:4.0}];
+const SC={lb:["2022","2023","2024","2025*","2026","2027","2028"],
+  h:[581,527,537,620,null,null,null],
+  m:[null,null,null,620,688,750,820],
+  b:[null,null,null,620,480,420,370]};
+
+let selD="TODOS", selDel="TODOS", selM="casos", selR="Director PNP";
+const isDk = window.matchMedia("(prefers-color-scheme: dark)").matches;
+const tc = isDk ? "#D1D5DB" : "#374151";
+const gc = isDk ? "rgba(255,255,255,.07)" : "rgba(0,0,0,.07)";
+
+// ── UTILIDADES ──
+function rcol(r){ return r>=30?"#E24B4A":r>=20?"#BA7517":"#0F6E56"; }
+function bsz(d,m){
+  if(m==="reinc") return 5+(d.r/38.3)*18;
+  if(m==="dias")  return 5+(d.di/44.7)*18;
+  return 5+(d.c/294)*22;
+}
+function bcol(d,m){
+  if(m==="reinc") return rcol(d.r);
+  if(m==="dias"){ return d.di>40?"#E24B4A":d.di>25?"#BA7517":"#0F6E56"; }
+  return rcol(d.r);
+}
+
+// ── MAPA ──
+function renderMap(){
+  const g=document.getElementById("map-bubbles");
+  g.innerHTML="";
+  const svg=document.getElementById("lima-map");
+  const tt=document.getElementById("mtt");
+  DIST.forEach((d,i)=>{
+    const r=bsz(d,selM), col=bcol(d,selM), isSel=selD===d.n, isGray=selD!=="TODOS"&&!isSel;
+    if(d.r>=30&&selD==="TODOS"){
+      const pulse=document.createElementNS("http://www.w3.org/2000/svg","circle");
+      pulse.setAttribute("cx",d.x); pulse.setAttribute("cy",d.y); pulse.setAttribute("r",r+3);
+      pulse.setAttribute("fill","none"); pulse.setAttribute("stroke",col); pulse.setAttribute("stroke-width","1.5");
+      pulse.innerHTML=`<animate attributeName="r" values="${r};${r+9};${r}" dur="2.5s" repeatCount="indefinite" begin="${i*.3}s"/><animate attributeName="opacity" values="0.55;0;0.55" dur="2.5s" repeatCount="indefinite" begin="${i*.3}s"/>`;
+      g.appendChild(pulse);
+    }
+    const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx",d.x); c.setAttribute("cy",d.y); c.setAttribute("r",r);
+    c.setAttribute("fill",isGray?"#888780":col);
+    c.setAttribute("opacity",isGray?"0.22":isSel?"1":"0.78");
+    c.setAttribute("stroke",isSel?"#fff":col);
+    c.setAttribute("stroke-width",isSel?"2":"0.5");
+    c.style.cursor="pointer"; c.style.transition="all .2s";
+    c.addEventListener("mouseenter",()=>{
+      const svgR=svg.getBoundingClientRect();
+      const sx=svgR.width/240, sy=svgR.height/390;
+      tt.style.display="block";
+      tt.style.left=(d.x*sx+12)+"px";
+      tt.style.top=Math.max(0,(d.y*sy-20))+"px";
+      tt.innerHTML=`<strong>${d.n}</strong><br>Casos: <strong>${d.c}</strong><br>Reincidencia: <strong style="color:${rcol(d.r)}">${d.r}%</strong><br>Denuncia: <strong>${d.d}%</strong><br>Días resol.: <strong>${d.di}</strong>`;
+    });
+    c.addEventListener("mouseleave",()=>{ tt.style.display="none"; });
+    c.addEventListener("click",()=>{
+      selD = selD===d.n ? "TODOS" : d.n;
+      document.getElementById("sdist").value = selD;
+      updateKPIs(); renderMap();
+    });
+    g.appendChild(c);
+    if(d.c>100||isSel){
+      const t=document.createElementNS("http://www.w3.org/2000/svg","text");
+      t.setAttribute("x",d.x); t.setAttribute("y",d.y+1);
+      t.setAttribute("text-anchor","middle"); t.setAttribute("dominant-baseline","middle");
+      t.setAttribute("fill","white"); t.setAttribute("font-size","7"); t.setAttribute("font-weight","bold");
+      t.style.pointerEvents="none"; t.textContent=d.c;
+      g.appendChild(t);
+    }
+  });
+}
+
+// ── KPIs ──
+function updateKPIs(){
+  const d = selD!=="TODOS" ? DIST.find(x=>x.n===selD) : null;
+  document.getElementById("v-casos").textContent = d ? d.c.toLocaleString() : "1,800";
+  document.getElementById("v-reinc").textContent = d ? d.r : "28.2";
+  document.getElementById("v-den").textContent   = d ? d.d : "69.5";
+  document.getElementById("v-dias").textContent  = d ? d.di : "35.6";
+  const r = d ? d.r : 28.2;
+  document.getElementById("dot-reinc").style.background = rcol(r);
+}
+
+// ── CHART.JS BASE OPTIONS ──
+const bo = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{ display:false } },
+  scales:{
+    x:{ ticks:{color:tc,font:{size:10}}, grid:{color:gc} },
+    y:{ ticks:{color:tc,font:{size:10}}, grid:{color:gc} }
+  }
+};
+
+let charts = {};
+function initCharts(){
+  charts.trend = new Chart(document.getElementById("c-trend"),{
+    type:"line",
+    data:{ labels:MES, datasets:[
+      {label:"2022",data:TR[0],borderColor:"#B4B2A9",borderWidth:1.5,pointRadius:0,fill:false,tension:.3},
+      {label:"2023",data:TR[1],borderColor:"#185FA5",borderWidth:1.5,pointRadius:0,fill:false,tension:.3},
+      {label:"2024",data:TR[2],borderColor:"#BA7517",borderWidth:2,  pointRadius:0,fill:false,tension:.3},
+      {label:"2025",data:TR[3],borderColor:"#E24B4A",borderWidth:2.5,pointRadius:0,fill:false,tension:.3,borderDash:[5,3]},
+    ]},
+    options:{...bo, plugins:{legend:{display:true,position:"top",labels:{color:tc,font:{size:10},boxWidth:18,padding:8}}}}
+  });
+
+  charts.delito = new Chart(document.getElementById("c-delito"),{
+    type:"bar",
+    data:{ labels:DEL.map(d=>d.n), datasets:[{label:"Casos",data:DEL.map(d=>d.v),
+      backgroundColor:DEL.map((_,i)=>`hsl(${i*24},68%,${isDk?52:42}%)`)}] },
+    options:{...bo, indexAxis:"y",
+      scales:{x:{ticks:{color:tc,font:{size:10}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:10}},grid:{color:gc}}}}
+  });
+
+  charts.turno = new Chart(document.getElementById("c-turno"),{
+    type:"bar",
+    data:{ labels:TUR.map(t=>t.n), datasets:[{label:"Casos",data:TUR.map(t=>t.v),
+      backgroundColor:["#1E3A5Faa","#BA7517aa","#9A3412aa","#4C1D95aa"]}] },
+    options:{...bo}
+  });
+
+  charts.arma = new Chart(document.getElementById("c-arma"),{
+    type:"bar",
+    data:{ labels:ARM.map(a=>a.n), datasets:[{label:"Casos",data:ARM.map(a=>a.v),
+      backgroundColor:["#534AB7aa","#E24B4Aaa","#BA7517aa","#0F6E56aa"]}] },
+    options:{...bo}
+  });
+
+  charts.lugar = new Chart(document.getElementById("c-lugar"),{
+    type:"bar",
+    data:{ labels:LUG.map(l=>l.n), datasets:[{label:"Casos",data:LUG.map(l=>l.v),
+      backgroundColor:"#185FA5aa"}] },
+    options:{...bo, indexAxis:"y",
+      scales:{x:{ticks:{color:tc,font:{size:10}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:9}},grid:{color:gc}}}}
+  });
+
+  charts.feat = new Chart(document.getElementById("c-feat"),{
+    type:"bar",
+    data:{ labels:FI.map(f=>f.f), datasets:[{label:"Importancia %",data:FI.map(f=>f.v),
+      backgroundColor:FI.map((_,i)=>`hsl(${220+i*15},65%,${isDk?52:40}%)`)}] },
+    options:{...bo, indexAxis:"y",
+      scales:{x:{ticks:{color:tc,font:{size:11},callback:v=>v+"%"},grid:{color:gc}},
+              y:{ticks:{color:tc,font:{size:11}},grid:{color:gc}}}}
+  });
+
+  const top8=[...DIST].sort((a,b)=>b.r-a.r).slice(0,8);
+  const sn=top8.map(d=>d.n.replace("San Juan de Lurigancho","SJL").replace("San Martín de Porres","SMP").replace("Villa El Salvador","VES").replace(/^San /,"S."));
+  charts.rdist = new Chart(document.getElementById("c-rdist"),{
+    type:"bar",
+    data:{ labels:sn, datasets:[{label:"Reincidencia %",data:top8.map(d=>d.r),
+      backgroundColor:top8.map(d=>rcol(d.r)+"aa")}] },
+    options:{...bo, indexAxis:"y",
+      scales:{x:{ticks:{color:tc,font:{size:11},callback:v=>v+"%"},grid:{color:gc}},
+              y:{ticks:{color:tc,font:{size:11}},grid:{color:gc}}}}
+  });
+
+  charts.scen = new Chart(document.getElementById("c-scen"),{
+    type:"line",
+    data:{ labels:SC.lb, datasets:[
+      {label:"Histórico",       data:SC.h,borderColor:"#888780",borderWidth:2,  pointBackgroundColor:"#888780",pointRadius:4,fill:false,spanGaps:false},
+      {label:"Sin intervención",data:SC.m,borderColor:"#E24B4A",borderWidth:2.5,pointBackgroundColor:"#E24B4A",pointRadius:5,fill:false,spanGaps:false,borderDash:[6,3]},
+      {label:"Con intervención",data:SC.b,borderColor:"#0F6E56",borderWidth:2.5,pointBackgroundColor:"#0F6E56",pointRadius:5,fill:false,spanGaps:false},
+    ]},
+    options:{...bo, scales:{x:{ticks:{color:tc,font:{size:11}},grid:{color:gc}},
+                            y:{ticks:{color:tc,font:{size:11}},grid:{color:gc},min:300,max:900}}}
+  });
+}
+
+function updateDelitoChart(){
+  const isA = selDel==="TODOS";
+  charts.delito.data.datasets[0].data = DEL.map(d=>isA?d.v:d.n===selDel?d.v:0);
+  charts.delito.data.datasets[0].backgroundColor = DEL.map((d,i)=>
+    `hsl(${i*24},68%,${isDk?52:42}%)`+(isA||d.n===selDel?"":"22"));
+  charts.delito.update();
+  document.getElementById("delito-subtitle").textContent =
+    isA ? "Distribución por tipo de delito" : `Filtrado: ${selDel}`;
+}
+
+// ── TABS ──
+function initTabs(){
+  const panels=document.querySelectorAll(".tab-panel");
+  panels.forEach((p,i)=>{ if(i!==0) p.style.display="none"; });
+  document.querySelectorAll(".tb").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const tab=parseInt(btn.dataset.tab);
+      document.querySelectorAll(".tb").forEach(b=>b.classList.remove("act"));
+      btn.classList.add("act");
+      panels.forEach((p,i)=>{ p.style.display = i===tab?"block":"none"; });
+    });
+  });
+}
+
+// ── MAP METRIC BUTTONS ──
+function initMapBtns(){
+  document.querySelectorAll(".mmb").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      document.querySelectorAll(".mmb").forEach(b=>b.classList.remove("act"));
+      btn.classList.add("act");
+      selM=btn.dataset.metric; renderMap();
+    });
+  });
+}
+
+// ── REACT PROMPT ──
+function updateReactPrompt(){
+  const rd={
+    "Director PNP":"operaciones policiales, despliegue y reducción de delitos violentos",
+    "Gerente MML":"política municipal, prevención comunitaria y presupuesto distrital",
+    "Ministro del Interior":"visión estratégica nacional y política criminal"
+  };
+  const items=[
+    {t:"R — Rol",c:"#7F77DD",v:`${selR}: ${rd[selR]}`},
+    {t:"E — Evidencia",c:"#185FA5",v:"1,800 casos · KPIs del dashboard · Modelo RF 82.4%"},
+    {t:"A — Acción",c:"#0F6E56",v:"Narrativa S→C→R · 3 párrafos · ≥4 cifras concretas"},
+    {t:"C — Contexto",c:"#BA7517",v:"Lima 2022-2024 · Decisión ejecutiva en 30 días"},
+    {t:"T — Tono",c:"#E24B4A",v:"Formal, directo, voz activa, sin tecnicismos"},
+  ];
+  document.getElementById("react-prompt").innerHTML = items.map(({t,c,v})=>
+    `<div style="margin-bottom:8px;padding:8px 10px;border-radius:var(--r-md);border-left:3px solid ${c};background:var(--bg3)">
+      <div style="font-size:10px;font-weight:500;color:${c};margin-bottom:2px">${t}</div>
+      <div style="font-size:11px;color:var(--text2)">${v}</div>
+    </div>`).join("");
+}
+
+// ── ROLE BUTTONS ──
+document.querySelectorAll(".rlb").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".rlb").forEach(b=>b.classList.remove("act"));
+    btn.classList.add("act");
+    selR=btn.dataset.role; updateReactPrompt();
+  });
+});
+
+// ── CLAUDE API ──
+document.getElementById("gen-btn").addEventListener("click", async()=>{
+  const btn=document.getElementById("gen-btn");
+  const out=document.getElementById("narr-out");
+  btn.disabled=true; btn.textContent="Generando con Claude...";
+  out.innerHTML=`<div class="cc" style="text-align:center;padding:40px;color:var(--text2)">
+    <i class="ti ti-loader" style="font-size:28px"></i>
+    <div style="margin-top:12px">Analizando 1,800 casos · Rol: ${selR}</div></div>`;
+
+  const rdesc={
+    "Director PNP":"Director General de la PNP. Enfoque: despliegue de efectivos, reducción de delitos violentos, tiempos de respuesta.",
+    "Gerente MML":"Gerente de Seguridad Ciudadana de la MML. Enfoque: serenazgo, prevención comunitaria, presupuesto distrital.",
+    "Ministro del Interior":"Ministro del Interior. Enfoque: política criminal nacional, coordinación con Ministerio Público, reforma institucional."
+  };
+
+  const prompt=`ROL: Eres el ${selR}. ${rdesc[selR]}
+
+EVIDENCIA (datos reales del dashboard Lima 2022-2024):
+- Total casos: 1,800 en 17 distritos. Incidentes 2024: 537 (+1.9% vs 2023).
+- Reincidencia: 28.2% (meta 18%). Denuncia formal: 69.5% (meta 85%). Días prom. resolución: 35.6 (meta ≤20).
+- Top 3 distritos: SJL 294 casos/35.7% reinc, Lima Cercado 170/36.5%, La Victoria 154/38.3%.
+- Delito más frecuente: Robo al paso 518 casos (28.8%). Turno crítico: Noche 687 casos (38.2%).
+- Modelo RF (82.4% Accuracy): sin intervención → 688 casos 2026 (+28%), reinc 33%. Con intervención → 480 casos (−11%), reinc 18%, resolución 20 días, ahorro 3,200 h/policía-año.
+
+ACCIÓN: Redacta la narrativa S→C→R. Usa EXACTAMENTE este formato:
+
+SITUACIÓN:
+[2-3 oraciones con ≥3 cifras del dataset]
+
+COMPLICACIÓN:
+[2-3 oraciones con hallazgo crítico, magnitud y consecuencia sin intervención]
+
+RESOLUCIÓN:
+[2-3 oraciones con acción concreta, plazo, responsable y cifra del escenario prometedor]
+
+TONO: Formal, primera persona del cargo, voz activa, sin tecnicismos. Solo el texto en el formato indicado.`;
+
+  try{
+    const headers = {"Content-Type":"application/json"};
+    if(ANTHROPIC_API_KEY) headers["x-api-key"] = ANTHROPIC_API_KEY;
+
+    const resp = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST", headers,
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,messages:[{role:"user",content:prompt}]})
+    });
+    const data = await resp.json();
+    const txt = data.content?.[0]?.text || "";
+    const sM=txt.match(/SITUACI[ÓO]N:\s*([\s\S]*?)(?=COMPLICACI[ÓO]N:|$)/i);
+    const cM=txt.match(/COMPLICACI[ÓO]N:\s*([\s\S]*?)(?=RESOLUCI[ÓO]N:|$)/i);
+    const rM=txt.match(/RESOLUCI[ÓO]N:\s*([\s\S]*?)$/i);
+    const S=sM?sM[1].trim():""; const C=cM?cM[1].trim():""; const R=rM?rM[1].trim():"";
+
+    out.innerHTML=`
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px">Narrativa generada para: <strong>${selR}</strong></div>
+      <div class="src" style="background:var(--info-bg);border-color:var(--info-border)">
+        <div style="font-size:11px;font-weight:500;color:var(--info-text);margin-bottom:8px"><i class="ti ti-building-community"></i> Situación</div>
+        <div style="font-size:13px;color:var(--text1);line-height:1.65">${S}</div>
+      </div>
+      <div class="src" style="background:var(--danger-bg);border-color:var(--danger-border)">
+        <div style="font-size:11px;font-weight:500;color:var(--danger-text);margin-bottom:8px"><i class="ti ti-alert-triangle"></i> Complicación</div>
+        <div style="font-size:13px;color:var(--text1);line-height:1.65">${C}</div>
+      </div>
+      <div class="src" style="background:var(--success-bg);border-color:var(--success-border)">
+        <div style="font-size:11px;font-weight:500;color:var(--success-text);margin-bottom:8px"><i class="ti ti-check"></i> Resolución</div>
+        <div style="font-size:13px;color:var(--text1);line-height:1.65">${R}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text2);padding:10px;background:var(--bg2);border-radius:var(--r-md)">
+        <i class="ti ti-refresh"></i> Cambia el rol arriba y regenera para comparar cómo cambia el énfasis narrativo.
+      </div>`;
+  }catch(e){
+    out.innerHTML=`<div class="cc" style="color:var(--danger-text)"><i class="ti ti-wifi-off"></i> Error de conexión. Para usar fuera de claude.ai, agrega tu API key en la variable ANTHROPIC_API_KEY del script.</div>`;
+  }
+  btn.disabled=false;
+  btn.innerHTML='<i class="ti ti-sparkles"></i> Generar narrativa S→C→R';
+});
+
+// ── SELECTORES GLOBALES ──
+document.getElementById("sdist").addEventListener("change",e=>{
+  selD=e.target.value; updateKPIs(); renderMap();
+});
+document.getElementById("sdelito").addEventListener("change",e=>{
+  selDel=e.target.value; updateDelitoChart();
+});
+
+// ── INIT ──
+window.addEventListener("DOMContentLoaded",()=>{
+  const sel=document.getElementById("sdist");
+  [...DIST].sort((a,b)=>a.n.localeCompare(b.n)).forEach(d=>{
+    const o=document.createElement("option"); o.value=d.n; o.textContent=d.n; sel.appendChild(o);
+  });
+  renderMap();
+  initCharts();
+  initTabs();
+  initMapBtns();
+  updateReactPrompt();
+});
+</script>
+</body>
+</html>
